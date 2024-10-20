@@ -1,0 +1,226 @@
+                                                                          React.js Missions:
+
+1. Dynamic Dish Display: I’ll start by creating a reusable component called DishCard to display individual dishes. Each dish will have a name, cuisine type, and an image. The user will be able to select different cuisines from a dropdown or menu, and based on that choice, only the dishes from the selected category will be displayed.
+
+const DishCard = ({ name, cuisine, image }) => (
+  <div className="dish-card">
+    <img src={image} alt={name} />
+    <h3>{name}</h3>
+    <p>{cuisine}</p>
+  </div>
+);
+
+The DishDisplay component will filter dishes based on the chosen cuisine, and display them using multiple DishCard components.
+const DishDisplay = ({ dishes, selectedCuisine }) => {
+  const filteredDishes = dishes.filter(dish => dish.cuisine === selectedCuisine);
+  return (
+    <div className="dish-container">
+      {filteredDishes.map(dish => (
+        <DishCard key={dish.name} {...dish} />
+      ))}
+    </div>
+  );
+};
+
+2. Flavor Preferences: For the "like" functionality, I’ll use a useState hook to store the liked dishes locally. To make sure the user’s likes persist even after refreshing, I’ll save them in localStorage.
+const [likedDishes, setLikedDishes] = useState(() => {
+  const savedLikes = localStorage.getItem('likedDishes');
+  return savedLikes ? JSON.parse(savedLikes) : [];
+});
+
+const handleLike = (dishName) => {
+  const updatedLikes = [...likedDishes, dishName];
+  setLikedDishes(updatedLikes);
+  localStorage.setItem('likedDishes', JSON.stringify(updatedLikes));
+};
+
+3. Real-time Updates:To simulate real-time availability updates, I’ll use useEffect and setInterval to randomly update the availability status of dishes.
+useEffect(() => {
+  const interval = setInterval(() => {
+    const updatedDishes = dishes.map(dish => ({
+      ...dish,
+      status: Math.random() > 0.5 ? 'available' : 'sold out',
+    }));
+    setDishes(updatedDishes);
+  }, 5000);  // Updates every 5 seconds
+  return () => clearInterval(interval);
+}, []);
+
+4. Seamless Checkout Preview: I’ll maintain a basket (shopping cart) that updates dynamically when dishes are added or removed. The basket will show the selected dishes and their total price, updated in real-time.
+const [basket, setBasket] = useState([]);
+const handleAddToBasket = (dish) => {
+  setBasket(prevBasket => [...prevBasket, dish]);
+};
+const totalPrice = basket.reduce((total, dish) => total + dish.price, 0);
+
+5. Cuisine Carousel: For the carousel, I’ll use a package like react-slick to create a smooth transition between different cuisine types. This will allow users to browse popular cuisines in an attractive way.
+import Slider from 'react-slick';
+const CuisineCarousel = ({ cuisines }) => (
+  <Slider>
+    {cuisines.map(cuisine => (
+      <div key={cuisine}>
+        <h3>{cuisine}</h3>
+      </div>
+    ))}
+  </Slider>
+);
+
+6. Review Reflections:For displaying reviews, I’ll initially fetch a small set of reviews and then load more as the user scrolls down the page. This can be done with a "Load More" button or infinite scroll logic.
+const [reviews, setReviews] = useState([]);
+const fetchMoreReviews = () => {
+  // Fetch more reviews from an API or load from an array
+};
+
+7. User Authentication Flow: Although there’s no need for a real backend, I’ll simulate the login and signup process with some basic form inputs and state management.
+const [user, setUser] = useState(null);
+const handleLogin = (username, password) => {
+  setUser({ username });
+};
+
+8. Profile Page Navigation:I’ll use React Router to create navigation between the home page and the profile page. Only authenticated users will be able to access the profile page.
+<Routes>
+  <Route path="/" element={<HomePage />} />
+  <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/" />} />
+</Routes>
+
+9. Global Theme Selector: I’ll create a theme switcher using useContext to toggle between light and dark modes. The user’s choice will be saved in localStorage to persist the theme across sessions.
+const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
+const toggleTheme = () => {
+  const newTheme = theme === 'light' ? 'dark' : 'light';
+  setTheme(newTheme);
+  localStorage.setItem('theme', newTheme);
+};
+
+10. Data Validation with a Twist: For the feedback form, I’ll use controlled inputs with validation, such as required fields, character limits, and other constraints to ensure proper data entry.
+const handleSubmit = (e) => {
+  e.preventDefault();
+  if (feedback.length > 0 && feedback.length <= 200) {
+    // Submit feedback
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                           JavaScript Missions
+
+
+1. Menu Manipulation: I will create a function that adds a new dish to the menu, represented as an array of objects. This function will first check if the dish already exists in the array to prevent duplicates. If the dish isn’t already present, it will be added.
+function addDish(menu, newDish) {
+  const exists = menu.some(dish => dish.name === newDish.name);
+  if (!exists) {
+    menu.push(newDish);
+  } else {
+    console.log('Dish already exists!');
+  }
+}
+
+2. Special Offer Highlighter:I’ll write a function that loops through an array of dishes and marks those with a discount as "special." This could be as simple as adding a special property to the object or displaying a visual badge in the UI.
+function highlightSpecialOffers(dishes) {
+  dishes.forEach(dish => {
+    if (dish.discount) {
+      dish.special = true;
+    }
+  });
+}
+
+3. Cuisine Categorization: To categorize dishes by their cuisine, I will create a function that goes through the array of dishes and groups them by cuisine type into an object.
+function categorizeByCuisine(dishes) {
+  const categorized = {};
+  dishes.forEach(dish => {
+    if (!categorized[dish.cuisine]) {
+      categorized[dish.cuisine] = [];
+    }
+    categorized[dish.cuisine].push(dish);
+  });
+  return categorized;
+}
+
+4. Order Timeout Simulation:I’ll simulate an order timeout by setting a timer. If the user doesn’t confirm the order within a set timeframe, a message will be displayed, and the order will be cleared.
+function orderTimeout(callback, delay) {
+  const timer = setTimeout(() => {
+    console.log('Order timeout! Order has been cleared.');
+    callback();
+  }, delay);
+
+  return () => clearTimeout(timer);  // Allows clearing the timer if the order is confirmed
+}
+
+5. Promotional Countdown:This function will display a countdown timer for a promotional offer. I will continuously update the remaining time until the offer expires and display it in hours and minutes.
+function promotionalCountdown(endTime) {
+  const interval = setInterval(() => {
+    const now = new Date();
+    const remainingTime = endTime - now;
+
+    if (remainingTime <= 0) {
+      clearInterval(interval);
+      console.log('Promotion has ended!');
+    } else {
+      const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+      const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+      console.log(`Time left: ${hours}h ${minutes}m`);
+    }
+  }, 1000);
+}
+
+6. Ingredient Filter: To filter dishes based on selected ingredients, I’ll write a function that returns only the dishes containing all the ingredients the user has selected.
+function filterByIngredients(dishes, selectedIngredients) {
+  return dishes.filter(dish => 
+    selectedIngredients.every(ingredient => dish.ingredients.includes(ingredient))
+  );
+}
+
+7. Dynamic Price Adjustment:This function will dynamically adjust the total price of a dish based on the options the user selects (e.g., size, extras). I’ll calculate the new price whenever an option is selected.
+function adjustPrice(basePrice, options) {
+  let totalPrice = basePrice;
+  options.forEach(option => {
+    totalPrice += option.price;
+  });
+  return totalPrice;
+}
+
+8. Data Fetching from Server: I’ll simulate fetching dish data from a local JSON file or server. I’ll handle potential errors using try...catch to ensure the app remains stable if the fetching fails.
+async function fetchDishData() {
+  try {
+    const response = await fetch('dishes.json');  // Simulating server fetch
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error('Error fetching dish data:', error);
+  }
+}
+
+9. User Data Management: For managing user data such as order history or preferences, I’ll store the data in localStorage and retrieve it when needed.
+function saveUserData(key, data) {
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+function getUserData(key) {
+  const data = localStorage.getItem(key);
+  return data ? JSON.parse(data) : null;
+}
+
+10. Form Handling and Input Validation:To handle user feedback submission, I’ll create a form with validation for required fields and correct input formats, like checking if the email is valid.
+function validateFeedbackForm(formData) {
+  const { name, email, feedback } = formData;
+
+  if (!name || !email || !feedback) {
+    return 'All fields are required';
+  }
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email)) {
+    return 'Invalid email format';
+  }
+
+  return null;  // Return null if validation passes
+}
